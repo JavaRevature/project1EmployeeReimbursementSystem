@@ -5,6 +5,9 @@ import com.revature.ers_backend.models.Role;
 import com.revature.ers_backend.models.User;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,9 +16,15 @@ public class UserService {
     private final UserDAO userDAO;
 
     @Autowired
+    private JWTService jwtService;
+
+    @Autowired
     public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public User registerUser(User user) {
         if(user.getUsername().isBlank() || user.getPassword().isBlank()) {
@@ -56,4 +65,13 @@ public class UserService {
     }
 
 
+    public String verify(User user) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
+
+        if(authentication.isAuthenticated()){
+           return jwtService.generateToken(user.getUsername());
+        }
+
+        return "failed";
+    }
 }

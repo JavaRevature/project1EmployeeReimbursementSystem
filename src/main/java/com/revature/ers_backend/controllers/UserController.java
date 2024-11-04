@@ -38,11 +38,6 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUserByUsername(username));
     }
 
-    @PostMapping
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        return ResponseEntity.status(201).body(userService.registerUser(user));
-    }
-
     @PatchMapping("/{userId}")
     public ResponseEntity<User> updateUserRole(@PathVariable int userId,@RequestBody Role role) {
         return ResponseEntity.status(200).body(userService.updateUserRole(userId, role));
