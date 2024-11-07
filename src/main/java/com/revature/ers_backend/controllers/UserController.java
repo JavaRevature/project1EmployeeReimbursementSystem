@@ -4,6 +4,7 @@ import com.revature.ers_backend.models.Role;
 import com.revature.ers_backend.models.User;
 import com.revature.ers_backend.services.UserService;
 import jakarta.annotation.security.PermitAll;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,19 @@ public class UserController {
         return ResponseEntity.status(200).body(userService.updateUserRole(userId, role));
     }
 
+
     @DeleteMapping("/{userId}")
-    public ResponseEntity<User> deleteUser(@PathVariable int userId) {
-        return ResponseEntity.status(200).body(userService.deleteUser(userId));
+    public ResponseEntity<User> deleteUser(@PathVariable int userId, Principal principal) {
+        if(userService.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
+            return ResponseEntity.status(403).build();
+        }
+        else {
+            return ResponseEntity.status(200).body(userService.deleteUser(userId));
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
+        return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
     }
 }

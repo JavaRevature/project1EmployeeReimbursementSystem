@@ -1,5 +1,6 @@
 package com.revature.ers_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,6 +43,7 @@ public class User {
     private Role role = Role.EMPLOYEE;
 
     @OneToMany(mappedBy = "submittedBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Reimbursement> reimbursements;
 
     @Override

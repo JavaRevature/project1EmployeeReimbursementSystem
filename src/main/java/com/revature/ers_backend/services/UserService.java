@@ -5,6 +5,7 @@ import com.revature.ers_backend.models.Role;
 import com.revature.ers_backend.models.User;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,6 +56,7 @@ public class UserService {
         return user;
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     public User deleteUser(int userId) {
 
         User user = userDAO.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));

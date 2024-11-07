@@ -37,11 +37,11 @@ public class Reimbursement {
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "submitted_by", nullable = false)
     private User submittedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resolved_by")
     private User resolvedBy;
 
