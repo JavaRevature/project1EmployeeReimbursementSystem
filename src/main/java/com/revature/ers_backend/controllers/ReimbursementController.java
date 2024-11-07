@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReimbursementController {
 
     @Autowired
-    UserService userSevice;
+    UserService userService;
 
     @Autowired
     ReimbursementService reimbursementService;
@@ -45,7 +45,7 @@ public class ReimbursementController {
 
     @GetMapping("/all")
     public ResponseEntity<List<Reimbursement>> getAllReimbursements(Principal principal) {
-        if(userSevice.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
+        if(userService.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
             return ResponseEntity.status(403).build();
         }
         else {
@@ -55,7 +55,7 @@ public class ReimbursementController {
 
     @PatchMapping("/{reimbursementId}")
     public ResponseEntity<Reimbursement> updateReimbursementStatus(@PathVariable int reimbursementId, @RequestBody Status status, Principal principal) {
-        if(userSevice.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
+        if(userService.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
             return ResponseEntity.status(403).build();
         }
         else{

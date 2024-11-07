@@ -1,6 +1,8 @@
 package com.revature.ers_backend.services;
 
 import com.revature.ers_backend.daos.UserDAO;
+import com.revature.ers_backend.exceptions.DuplicatedUsersException;
+import com.revature.ers_backend.exceptions.NoUsersFoundException;
 import com.revature.ers_backend.models.Role;
 import com.revature.ers_backend.models.User;
 import java.util.List;
@@ -31,6 +33,11 @@ public class UserService {
         if(user.getUsername().isBlank() || user.getPassword().isBlank()) {
             throw new IllegalArgumentException("Username and password cannot be blank");
         }
+
+        if(userDAO.findByUsername(user.getUsername()).isPresent()) {
+            throw new DuplicatedUsersException("Username already exists");
+        }
+
         return userDAO.save(user);
     }
 
@@ -38,7 +45,8 @@ public class UserService {
         if(username.isBlank()){
             throw new IllegalArgumentException("Username cannot be blank");
         }
-        return userDAO.findByUsername(username);
+        User user = userDAO.findByUsername(username).orElseThrow(() -> new NoUsersFoundException("User not found"));
+        return user;
     }
 
     public List<User> getAllUsers() {
@@ -47,7 +55,8 @@ public class UserService {
 
     public User updateUserRole(int userId, Role role) {
 
-        User user = userDAO.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userDAO.findById(userId).orElseThrow(() -> new NoUsersFoundException("User not found"));
+        //if role is not in the enum
 
         user.setRole(role);
 
@@ -59,7 +68,7 @@ public class UserService {
     @PreAuthorize("hasRole('MANAGER')")
     public User deleteUser(int userId) {
 
-        User user = userDAO.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userDAO.findById(userId).orElseThrow(() -> new NoUsersFoundException("User not found"));
 
         userDAO.deleteById(userId);
 

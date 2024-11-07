@@ -1,5 +1,6 @@
 package com.revature.ers_backend.controllers;
 
+import com.revature.ers_backend.exceptions.NoUsersFoundException;
 import com.revature.ers_backend.models.Role;
 import com.revature.ers_backend.models.User;
 import com.revature.ers_backend.services.UserService;
@@ -7,8 +8,11 @@ import jakarta.annotation.security.PermitAll;
 import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +40,10 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        User user = userService.getUserByUsername(username);
+        if (user == null) {
+            throw new NoUsersFoundException("User with username '" + username + "' not found");
+        }
         return ResponseEntity.ok().body(userService.getUserByUsername(username));
     }
 
@@ -69,5 +77,10 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Principal principal) {
         return ResponseEntity.ok().body(userService.getUserByUsername(principal.getName()));
+    }
+
+    @ExceptionHandler(NoUsersFoundException.class)
+    public ResponseEntity<String> handleNoUsersFoundException(NoUsersFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
