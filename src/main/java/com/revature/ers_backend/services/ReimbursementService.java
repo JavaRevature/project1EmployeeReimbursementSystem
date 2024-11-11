@@ -34,15 +34,20 @@ public class ReimbursementService {
         return reimbursementDAO.findAll();
     }
 
+    public List<Reimbursement> getAllPendingReimbursements() {
+        return reimbursementDAO.findByStatus(Status.PENDING);
+    }
+
     public List<Reimbursement> getUsersPendingReimbursements(Principal principal) {
         return reimbursementDAO.findByStatusAndSubmittedBy(Status.PENDING, userService.getUserByUsername(principal.getName()));
     }
 
-    public Reimbursement updateReimbursementStatus(int reimbursementId, Status status) {
+    public Reimbursement updateReimbursementStatus(int reimbursementId, Status status, Principal principal) {
         boolean present = reimbursementDAO.findById(reimbursementId).isPresent();
         if(present) {
             Reimbursement reimbursement = reimbursementDAO.findById(reimbursementId).get();
             reimbursement.setStatus(status);
+            reimbursement.setResolvedBy(userService.getUserByUsername(principal.getName()));
             return reimbursementDAO.save(reimbursement);
         }
         else{

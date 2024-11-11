@@ -13,4 +13,6 @@ public interface ReimbursementDAO extends JpaRepository<Reimbursement, Integer> 
     List<Reimbursement> findBySubmittedBy(User user);
 
     List<Reimbursement> findByStatusAndSubmittedBy(Status status, User userByUsername);
+
+    List<Reimbursement> findByStatus(Status status);
 }

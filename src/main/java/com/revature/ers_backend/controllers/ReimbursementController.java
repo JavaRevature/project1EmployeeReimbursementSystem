@@ -55,13 +55,23 @@ public class ReimbursementController {
         }
     }
 
+    @GetMapping("/all/pending")
+    public ResponseEntity<List<Reimbursement>> getAllPendingReimbursements(Principal principal) {
+        if(userService.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
+            return ResponseEntity.status(403).build();
+        }
+        else {
+            return ResponseEntity.ok().body(reimbursementService.getAllPendingReimbursements());
+        }
+    }
+
     @PatchMapping("/{reimbursementId}")
     public ResponseEntity<Reimbursement> updateReimbursementStatus(@PathVariable int reimbursementId, @RequestBody Status status, Principal principal) {
         if(userService.getUserByUsername(principal.getName()).getRole() != Role.MANAGER) {
             return ResponseEntity.status(403).build();
         }
         else{
-            return ResponseEntity.ok().body(reimbursementService.updateReimbursementStatus(reimbursementId, status));
+            return ResponseEntity.ok().body(reimbursementService.updateReimbursementStatus(reimbursementId, status,principal));
         }
     }
 
