@@ -1,5 +1,6 @@
 package com.revature.ers_backend.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,7 +38,7 @@ public class Reimbursement {
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "submitted_by", nullable = false)
     private User submittedBy;
 
